@@ -1,19 +1,14 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import './globals.css';
 
-export const metadata: Metadata = {
-  title: "Kin Delivery — Backoffice",
-  description: "Backoffice management portal for Kin Delivery",
+export const metadata = {
+  title: 'Kin Delivery Admin',
+  description: 'Backoffice for Kin Delivery',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

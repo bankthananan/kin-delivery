@@ -45,12 +45,12 @@ export class RestaurantsController {
   }
 
   @Get('restaurants/:id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id') id: string): Promise<any> {
     return this.restaurantsService.findById(id);
   }
 
   @Get('restaurants/:id/menu')
-  getMenu(@Param('id') id: string) {
+  getMenu(@Param('id') id: string): Promise<any> {
     return this.restaurantsService.getMenu(id);
   }
 
@@ -83,7 +83,7 @@ export class RestaurantsController {
   createMenuItem(
     @CurrentUser() user: JwtPayload,
     @Body() dto: CreateMenuItem,
-  ) {
+  ): Promise<any> {
     return this.restaurantsService.createMenuItem(user.sub, dto.categoryId, {
       name: dto.name,
       description: dto.description,
@@ -98,7 +98,7 @@ export class RestaurantsController {
     @CurrentUser() user: JwtPayload,
     @Param('id') itemId: string,
     @Body(new ZodValidationPipe(UpdateMenuItemSchema)) dto: UpdateMenuItem,
-  ) {
+  ): Promise<any> {
     return this.restaurantsService.updateMenuItem(user.sub, itemId, dto);
   }
 

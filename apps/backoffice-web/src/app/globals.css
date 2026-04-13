@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-surface: #ffffff;
+    --bg-surface-muted: #f4f4f5;
+    --bg-surface-elevated: #ffffff;
+    --text-primary: #09090b;
+    --text-muted: #71717a;
+    --border-subtle: #e4e4e7;
+    
+    --brand-primary: #18181b;
+    --brand-accent: #3b82f6;
+
+    --status-success: #10b981;
+    --status-error: #ef4444;
+    --status-warning: #f59e0b;
+    --status-info: #3b82f6;
+    
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    
+    --radius-sm: 0.125rem;
+    --radius-md: 0.25rem;
+    --radius-lg: 0.5rem;
+  }
+
+  body {
+    background-color: var(--bg-surface-muted);
+    color: var(--text-primary);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-zinc-900 text-white font-medium rounded shadow-sm hover:bg-zinc-800 transition-colors focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2;
+  }
+  .input-base {
+    @apply w-full px-3 py-2 bg-white border border-zinc-200 rounded text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-colors;
+  }
+  .card-container {
+    @apply bg-white border border-zinc-200 rounded-lg shadow-sm overflow-hidden;
+  }
+  .table-header {
+    @apply text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider bg-zinc-50 border-b border-zinc-200 px-4 py-3;
+  }
+  .table-cell {
+    @apply px-4 py-3 whitespace-nowrap text-sm text-zinc-700 border-b border-zinc-100;
+  }
+}

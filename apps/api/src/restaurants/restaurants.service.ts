@@ -75,7 +75,7 @@ export class RestaurantsService {
       }));
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<any> {
     const restaurant = await this.prisma.restaurant.findUnique({
       where: { id },
       include: {
@@ -92,7 +92,7 @@ export class RestaurantsService {
     return restaurant;
   }
 
-  async getMenu(id: string) {
+  async getMenu(id: string): Promise<any> {
     const restaurant = await this.prisma.restaurant.findUnique({
       where: { id },
       select: {
@@ -158,7 +158,7 @@ export class RestaurantsService {
     userId: string,
     categoryId: string,
     data: { name: string; description?: string; price: number },
-  ) {
+  ): Promise<any> {
     const restaurant = await this.getRestaurantByOwner(userId);
 
     const category = await this.prisma.menuCategory.findUnique({
@@ -183,7 +183,7 @@ export class RestaurantsService {
     userId: string,
     itemId: string,
     data: { name?: string; description?: string; price?: number; isAvailable?: boolean },
-  ) {
+  ): Promise<any> {
     const restaurant = await this.getRestaurantByOwner(userId);
 
     const item = await this.prisma.menuItem.findUnique({
