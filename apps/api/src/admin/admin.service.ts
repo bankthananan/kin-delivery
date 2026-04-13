@@ -14,7 +14,7 @@ export class AdminService {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const [ordersByStatus, revenueToday, activeDrivers, activeRestaurants, totalCustomers, totalDrivers, totalRestaurants] =
-      await this.prisma.$transaction([
+      await Promise.all([
         this.prisma.order.groupBy({
           by: ['status'],
           where: { createdAt: { gte: today, lt: tomorrow } },
