@@ -14,6 +14,9 @@ import { CartModule } from './cart/cart.module';
 import { DispatchModule } from './dispatch/dispatch.module';
 import { DriverModule } from './driver/driver.module';
 import { OrdersModule } from './orders/orders.module';
+import { RatingsModule } from './ratings/ratings.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { OrdersModule } from './orders/orders.module';
     DispatchModule,
     DriverModule,
     OrdersModule,
+    RatingsModule,
+    NotificationsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

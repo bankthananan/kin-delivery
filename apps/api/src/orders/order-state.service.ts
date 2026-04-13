@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { WalletService } from '../wallet/wallet.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   Order,
   OrderStatus,
@@ -47,6 +48,7 @@ export class OrderStateService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly walletService: WalletService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async transition(
@@ -139,25 +141,34 @@ export class OrderStateService {
   ): Promise<void> {
     switch (newStatus) {
       case OrderStatus.CONFIRMED:
-        // TODO: Task 11 — enqueue push notification to restaurant
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
         // TODO: Task 10 — schedule 5-min confirmation timeout via BullMQ
-        this.logger.log(`[TODO: BullMQ] Notify restaurant + schedule 5-min timeout for order ${order.id}`);
+        this.logger.log(`[TODO: BullMQ] Schedule 5-min timeout for order ${order.id}`);
         break;
 
       case OrderStatus.PREPARING:
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
         // TODO: Task 10 — cancel 5-min timeout job
         // TODO: Task 10 — start driver dispatch via BullMQ
         this.logger.log(`[TODO: BullMQ] Cancel timeout + start dispatch for order ${order.id}`);
         break;
 
+      case OrderStatus.READY:
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
+        break;
+
+      case OrderStatus.PICKED_UP:
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
+        break;
+
       case OrderStatus.CANCELLED:
         await this.handleCancellationRefund(order);
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
         break;
 
       case OrderStatus.DELIVERED:
         await this.handleDeliveryCommission(order);
-        // TODO: Task 11 — enqueue delivery completed notification
-        this.logger.log(`[TODO: BullMQ] Notify delivery complete for order ${order.id}`);
+        await this.notificationsService.notifyOrderStatus(order.id, newStatus);
         break;
 
       default:

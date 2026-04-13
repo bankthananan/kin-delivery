@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { GeoService } from '../geo/geo.service';
+import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { OrderStatus } from '@kin-delivery/database';
 
 const ACTIVE_STATUSES: OrderStatus[] = [
@@ -16,6 +17,7 @@ export class DriverService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly geoService: GeoService,
+    private readonly gateway: RealtimeGateway,
   ) {}
 
   async setOnline(driverId: string, lat: number, lng: number): Promise<void> {
@@ -49,6 +51,15 @@ export class DriverService {
       }),
       this.geoService.addDriverLocation(driverId, lat, lng),
     ]);
+
+    const activeOrders = await this.prisma.order.findMany({
+      where: { driverId, status: { in: ACTIVE_STATUSES } },
+      select: { id: true },
+    });
+
+    for (const order of activeOrders) {
+      this.gateway.emitDriverLocation(order.id, { lat, lng });
+    }
   }
 
   async getActiveOrders(driverId: string): Promise<any[]> {
