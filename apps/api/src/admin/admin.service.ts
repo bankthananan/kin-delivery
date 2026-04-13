@@ -7,7 +7,7 @@ import { Role } from '@kin-delivery/contracts';
 export class AdminService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getDashboard() {
+  async getDashboard(): Promise<any> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -68,7 +68,7 @@ export class AdminService {
     return { data, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
   }
 
-  async listOrders(status?: string, page = 1, pageSize = 20) {
+  async listOrders(status?: string, page = 1, pageSize = 20): Promise<any> {
     const skip = (page - 1) * pageSize;
     const where = status ? { status: status as OrderStatus } : {};
 
@@ -173,7 +173,7 @@ export class AdminService {
     };
   }
 
-  async listTransactions(type?: string, page = 1, pageSize = 20) {
+  async listTransactions(type?: string, page = 1, pageSize = 20): Promise<any> {
     const skip = (page - 1) * pageSize;
     const where = type ? { type: type as TransactionType } : {};
 
