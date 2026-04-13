@@ -10,6 +10,11 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "omise": "^1.1.0",
+    "promptpay-qr": "^0.5.0"
   }
 }
