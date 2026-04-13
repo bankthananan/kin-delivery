@@ -27,8 +27,8 @@ export default function MenuPage() {
   const loadMenu = async () => {
     if (!user?.restaurantId) return;
     try {
-      const data = await fetchApi<MenuCategory[]>(`/restaurants/${user.restaurantId}/menu`);
-      setCategories(data);
+      const data = await fetchApi<{ menuCategories: MenuCategory[] }>(`/restaurants/${user.restaurantId}/menu`);
+      setCategories(data.menuCategories ?? []);
     } catch (error) {
       console.error('Failed to load menu', error);
     } finally {

@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
 
       setAuth(response.user, response.accessToken);
-      router.push('/');
+      router.push('/orders');
     } catch (err: any) {
       if (err instanceof ApiError) {
         setError(err.message);

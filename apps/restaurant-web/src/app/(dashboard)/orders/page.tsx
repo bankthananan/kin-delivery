@@ -12,8 +12,8 @@ export default function OrdersQueuePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<any[]>('/orders')
-      .then((data) => setOrders(data))
+    fetchApi<any>('/orders')
+      .then((data) => setOrders(Array.isArray(data) ? data : data.data ?? []))
       .catch(console.error)
       .finally(() => setIsLoading(false));
 
@@ -29,8 +29,8 @@ export default function OrdersQueuePage() {
     });
 
     const interval = setInterval(() => {
-      fetchApi<any[]>('/orders')
-        .then((data) => setOrders(data))
+      fetchApi<any>('/orders')
+        .then((data) => setOrders(Array.isArray(data) ? data : data.data ?? []))
         .catch(console.error);
     }, 30000);
 

@@ -28,6 +28,7 @@
     "bcrypt": "^6.0.0",
     "bullmq": "^5.73.5",
     "decimal.js": "^10.6.0",
+    "dotenv": "^17.4.2",
     "firebase-admin": "^13.8.0",
     "ioredis": "^5.10.1",
     "passport": "^0.7.0",

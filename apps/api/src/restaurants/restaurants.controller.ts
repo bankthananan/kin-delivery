@@ -8,7 +8,6 @@ import {
   Param,
   Query,
   UseGuards,
-  UsePipes,
   ParseFloatPipe,
 } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
@@ -57,10 +56,9 @@ export class RestaurantsController {
   @Put('restaurant/status')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.RESTAURANT)
-  @UsePipes(new ZodValidationPipe(ToggleRestaurantStatusSchema))
   toggleStatus(
     @CurrentUser() user: JwtPayload,
-    @Body() dto: ToggleRestaurantStatus,
+    @Body(new ZodValidationPipe(ToggleRestaurantStatusSchema)) dto: ToggleRestaurantStatus,
   ) {
     return this.restaurantsService.toggleStatus(user.sub, dto.isOpen);
   }
@@ -68,10 +66,9 @@ export class RestaurantsController {
   @Post('restaurant/menu/categories')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.RESTAURANT)
-  @UsePipes(new ZodValidationPipe(CreateMenuCategorySchema))
   createCategory(
     @CurrentUser() user: JwtPayload,
-    @Body() dto: CreateMenuCategory,
+    @Body(new ZodValidationPipe(CreateMenuCategorySchema)) dto: CreateMenuCategory,
   ) {
     return this.restaurantsService.createCategory(user.sub, dto.name, dto.sortOrder);
   }
@@ -79,10 +76,9 @@ export class RestaurantsController {
   @Post('restaurant/menu/items')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.RESTAURANT)
-  @UsePipes(new ZodValidationPipe(CreateMenuItemSchema))
   createMenuItem(
     @CurrentUser() user: JwtPayload,
-    @Body() dto: CreateMenuItem,
+    @Body(new ZodValidationPipe(CreateMenuItemSchema)) dto: CreateMenuItem,
   ): Promise<any> {
     return this.restaurantsService.createMenuItem(user.sub, dto.categoryId, {
       name: dto.name,
@@ -115,10 +111,9 @@ export class RestaurantsController {
   @Put('restaurant/profile')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.RESTAURANT)
-  @UsePipes(new ZodValidationPipe(UpdateRestaurantProfileSchema))
   updateProfile(
     @CurrentUser() user: JwtPayload,
-    @Body() dto: UpdateRestaurantProfile,
+    @Body(new ZodValidationPipe(UpdateRestaurantProfileSchema)) dto: UpdateRestaurantProfile,
   ) {
     return this.restaurantsService.updateProfile(user.sub, dto);
   }

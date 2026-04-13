@@ -30,9 +30,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       return;
     }
     
-    fetchApi<{ isOpen: boolean }>(`/restaurants/${user.restaurantId}`)
-      .then(res => setIsRestaurantOpen(res.isOpen))
-      .catch(console.error);
+    if (user.restaurantId) {
+      fetchApi<{ isOpen: boolean }>(`/restaurants/${user.restaurantId}`)
+        .then(res => setIsRestaurantOpen(res.isOpen))
+        .catch(console.error);
+    }
   }, [user, router]);
 
   const handleToggleStatus = async (checked: boolean) => {

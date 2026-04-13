@@ -61,14 +61,11 @@ export class AuthService {
     });
 
     const accessToken = this.generateToken(user.id, user.email, user.role as string);
+    const profile = await this.buildUserProfile(user);
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
+      user: profile,
     };
   }
 
@@ -79,14 +76,11 @@ export class AuthService {
     }
 
     const accessToken = this.generateToken(user.id, user.email, user.role as string);
+    const profile = await this.buildUserProfile(user);
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
+      user: profile,
     };
   }
 
@@ -98,6 +92,27 @@ export class AuthService {
     if (!isMatch) return null;
 
     return user;
+  }
+
+  private async buildUserProfile(user: { id: string; email: string; role: any }) {
+    const profile: Record<string, any> = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    if (String(user.role) === Role.RESTAURANT) {
+      const restaurant = await this.prisma.restaurant.findUnique({
+        where: { userId: user.id },
+        select: { id: true, name: true },
+      });
+      if (restaurant) {
+        profile.restaurantId = restaurant.id;
+        profile.name = restaurant.name;
+      }
+    }
+
+    return profile;
   }
 
   generateToken(userId: string, email: string, role: string): string {

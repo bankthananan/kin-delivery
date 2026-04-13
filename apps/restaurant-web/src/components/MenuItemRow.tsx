@@ -26,7 +26,7 @@ export function MenuItemRow({
           {name}
         </h3>
         <p className={`text-sm mt-0.5 ${isAvailable ? 'text-gray-600' : 'text-gray-400'}`}>
-          ฿{price.toFixed(2)}
+          ฿{Number(price).toFixed(2)}
         </p>
       </div>
 
