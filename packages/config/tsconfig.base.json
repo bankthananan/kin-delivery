@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@kin-delivery/database": ["../../packages/database/src/index.ts"],
+      "@kin-delivery/contracts": ["../../packages/contracts/src/index.ts"],
+      "@kin-delivery/mapbox-client": ["../../packages/mapbox-client/src/index.ts"],
+      "@kin-delivery/omise-client": ["../../packages/omise-client/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
