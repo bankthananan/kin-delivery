@@ -10,6 +10,10 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@types/node": "^25.6.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.15.0"
   }
 }
