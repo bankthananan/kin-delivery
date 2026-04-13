@@ -1,0 +1,235 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [postgis]
+}
+
+enum Role {
+  CUSTOMER
+  DRIVER
+  RESTAURANT
+  ADMIN
+}
+
+enum OrderTier {
+  FASTEST
+  NORMAL
+  SAVER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  FAILED
+}
+
+enum PaymentMethod {
+  PROMPTPAY
+  APP_QR
+  COD
+  CARD
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum TransactionType {
+  TOPUP
+  PAYOUT
+  EARNING
+  PAYMENT
+  REFUND
+  ADJUSTMENT
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String    @unique
+  passwordHash  String
+  role          Role
+  fcmToken      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  customer      Customer?
+  driver        Driver?
+  admin         Admin?
+}
+
+model Customer {
+  id        String    @id
+  user      User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  orders    Order[]
+  addresses Address[]
+  wallet    Wallet?
+  ratings   Rating[]  @relation("CustomerRatings")
+}
+
+model Driver {
+  id           String   @id
+  user         User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  vehiclePlate String
+  isOnline     Boolean  @default(false)
+  currentLat   Float?
+  currentLng   Float?
+  wallet       Wallet?
+  deliveries   Order[]
+  ratings      Rating[] @relation("DriverRatings")
+}
+
+model Restaurant {
+  id             String                                @id @default(uuid())
+  userId         String                                @unique
+  name           String
+  description    String?
+  isOpen         Boolean                               @default(false)
+  openingTime    String?
+  closingTime    String?
+  lat            Float
+  lng            Float
+  location       Unsupported("geometry(Point, 4326)")?
+  menuCategories MenuCategory[]
+  orders         Order[]
+  wallet         Wallet?
+  ratings        Rating[]                              @relation("RestaurantRatings")
+  createdAt      DateTime                              @default(now())
+  updatedAt      DateTime                              @updatedAt
+
+  @@index([location], name: "restaurant_location_idx", type: Gist)
+}
+
+model MenuCategory {
+  id           String     @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  name         String
+  sortOrder    Int        @default(0)
+  items        MenuItem[]
+}
+
+model MenuItem {
+  id          String       @id @default(uuid())
+  categoryId  String
+  category    MenuCategory @relation(fields: [categoryId], references: [id])
+  name        String
+  description String?
+  price       Decimal      @db.Decimal(10, 2)
+  isAvailable Boolean      @default(true)
+  orderItems  OrderItem[]
+}
+
+model Address {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  label      String
+  lat        Float
+  lng        Float
+  addressStr String
+}
+
+model Order {
+  id                   String        @id @default(uuid())
+  customerId           String
+  customer             Customer      @relation(fields: [customerId], references: [id])
+  driverId             String?
+  driver               Driver?       @relation(fields: [driverId], references: [id])
+  restaurantId         String
+  restaurant           Restaurant    @relation(fields: [restaurantId], references: [id])
+  tier                 OrderTier
+  status               OrderStatus   @default(PENDING)
+  paymentMethod        PaymentMethod
+  paymentStatus        PaymentStatus @default(PENDING)
+  chargeId             String?
+  subtotal             Decimal       @db.Decimal(10, 2)
+  deliveryFee          Decimal       @db.Decimal(10, 2)
+  surgeMultiplier      Decimal       @default(1.0) @db.Decimal(4, 2)
+  total                Decimal       @db.Decimal(10, 2)
+  deliveryLat          Float
+  deliveryLng          Float
+  deliveryAddress      String
+  deliveryNote         String?
+  estimatedDurationMin Int?
+  items                OrderItem[]
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+}
+
+model OrderItem {
+  id           String   @id @default(uuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId   String
+  menuItem     MenuItem @relation(fields: [menuItemId], references: [id])
+  restaurantId String
+  quantity     Int
+  price        Decimal  @db.Decimal(10, 2)
+  notes        String?
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  balance      Decimal       @default(0.00) @db.Decimal(10, 2)
+  customerId   String?       @unique
+  customer     Customer?     @relation(fields: [customerId], references: [id])
+  driverId     String?       @unique
+  driver       Driver?       @relation(fields: [driverId], references: [id])
+  restaurantId String?       @unique
+  restaurant   Restaurant?   @relation(fields: [restaurantId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  walletId      String
+  wallet        Wallet          @relation(fields: [walletId], references: [id])
+  amount        Decimal         @db.Decimal(10, 2)
+  type          TransactionType
+  referenceId   String?
+  externalRefId String?
+  description   String?
+  createdAt     DateTime        @default(now())
+
+  @@unique([referenceId, type])
+}
+
+model Rating {
+  id           String      @id @default(uuid())
+  orderId      String      @unique
+  customerId   String
+  customer     Customer    @relation("CustomerRatings", fields: [customerId], references: [id])
+  driverId     String?
+  driver       Driver?     @relation("DriverRatings", fields: [driverId], references: [id])
+  restaurantId String?
+  restaurant   Restaurant? @relation("RestaurantRatings", fields: [restaurantId], references: [id])
+  score        Int
+  comment      String?
+  createdAt    DateTime    @default(now())
+}
+
+model Admin {
+  id    String @id
+  user  User   @relation(fields: [id], references: [id], onDelete: Cascade)
+  level String
+}
+
+model PlatformConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
