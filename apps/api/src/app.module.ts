@@ -13,6 +13,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { CartModule } from './cart/cart.module';
 import { DispatchModule } from './dispatch/dispatch.module';
 import { DriverModule } from './driver/driver.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DriverModule } from './driver/driver.module';
     CartModule,
     DispatchModule,
     DriverModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
