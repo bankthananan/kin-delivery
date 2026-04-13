@@ -17,6 +17,7 @@ import { OrdersModule } from './orders/orders.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
+import { RealtimeModule } from './realtime/realtime.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AdminModule } from './admin/admin.module';
     RatingsModule,
     NotificationsModule,
     AdminModule,
+    RealtimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -50,6 +50,7 @@ export class OrderStateService {
     private readonly prisma: PrismaService,
     private readonly walletService: WalletService,
     private readonly notificationsService: NotificationsService,
+    private readonly gateway: RealtimeGateway,
   ) {}
 
   async transition(
@@ -98,6 +99,8 @@ export class OrderStateService {
         driver: true,
       },
     });
+
+    this.gateway.emitOrderStatusUpdate(orderId, newStatus);
 
     this.logger.log(
       `Order ${orderId}: ${order.status} → ${newStatus} [triggered by ${triggeredBy.role}:${triggeredBy.userId}]`,

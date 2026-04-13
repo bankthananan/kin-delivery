@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { GeoModule } from '../geo/geo.module';
+import { RealtimeModule } from '../realtime/realtime.module';
 import { DispatchService } from './dispatch.service';
 import { DispatchProcessor } from './dispatch.processor';
 import { TimeoutProcessor } from './timeout.processor';
@@ -18,6 +19,7 @@ export const INTRANSIT_MONITOR_QUEUE = 'intransit-monitor';
       { name: INTRANSIT_MONITOR_QUEUE },
     ),
     GeoModule,
+    RealtimeModule,
   ],
   providers: [DispatchService, DispatchProcessor, TimeoutProcessor, IntransitMonitorProcessor],
   exports: [DispatchService],

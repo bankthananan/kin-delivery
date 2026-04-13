@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { PrismaService } from '../database/prisma.service';
 import { GeoService } from '../geo/geo.service';
+import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { ORDER_DISPATCH_QUEUE } from './dispatch.module';
 import { OrderTier, OrderStatus } from '@kin-delivery/database';
 
@@ -27,6 +28,7 @@ export class DispatchProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     private readonly geoService: GeoService,
+    private readonly gateway: RealtimeGateway,
   ) {
     super();
   }
@@ -99,5 +101,13 @@ export class DispatchProcessor extends WorkerHost {
 
     const driverIds = top5.map((d) => d.driverId);
     this.logger.log(`order.ping — order ${orderId} → drivers [${driverIds.join(', ')}]`);
+
+    const orderPayload = { orderId, restaurant: order.restaurant };
+    for (const { driverId } of top5) {
+      const socketId = this.gateway.getSocketIdByUserId(driverId);
+      if (socketId) {
+        this.gateway.emitOrderPing(socketId, orderPayload);
+      }
+    }
   }
 }
