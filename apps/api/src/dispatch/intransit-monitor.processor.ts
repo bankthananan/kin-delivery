@@ -3,7 +3,7 @@ import { Logger, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 import { PrismaService } from '../database/prisma.service';
-import { INTRANSIT_MONITOR_QUEUE } from './dispatch.module';
+import { INTRANSIT_MONITOR_QUEUE } from './dispatch.constants';
 import { OrderStatus, TransactionType } from '@kin-delivery/database';
 
 const STALE_THRESHOLD_MS = 2 * 60 * 60 * 1000;

@@ -1,19 +1,20 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PrismaClient } from '@kin-delivery/database';
 import { MapboxClient, Coordinates } from '@kin-delivery/mapbox-client';
 import Redis from 'ioredis';
 import { REDIS_CLIENT } from './redis.provider';
+import { PrismaService } from '../database/prisma.service';
 
 const DRIVERS_KEY = 'drivers:active';
 const EARTH_RADIUS_METERS = 6371000;
 
 @Injectable()
 export class GeoService {
-  private readonly prisma: PrismaClient;
   private readonly mapbox: MapboxClient;
 
-  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {
-    this.prisma = new PrismaClient();
+  constructor(
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    private readonly prisma: PrismaService,
+  ) {
     this.mapbox = new MapboxClient();
   }
 

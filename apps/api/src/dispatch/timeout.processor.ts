@@ -2,7 +2,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { PrismaService } from '../database/prisma.service';
-import { ORDER_TIMEOUT_QUEUE } from './dispatch.module';
+import { ORDER_TIMEOUT_QUEUE } from './dispatch.constants';
 import { OrderStatus, TransactionType } from '@kin-delivery/database';
 
 @Processor(ORDER_TIMEOUT_QUEUE)

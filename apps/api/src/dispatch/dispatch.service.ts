@@ -7,7 +7,7 @@ import { REDIS_CLIENT } from '../geo/redis.provider';
 import {
   ORDER_DISPATCH_QUEUE,
   ORDER_TIMEOUT_QUEUE,
-} from './dispatch.module';
+} from './dispatch.constants';
 
 @Injectable()
 export class DispatchService {

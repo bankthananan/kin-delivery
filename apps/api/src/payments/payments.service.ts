@@ -1,20 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  PrismaClient,
   TransactionType,
   PaymentStatus,
   OrderStatus,
 } from '@kin-delivery/database';
 import { OmiseClient, PromptPayChargeResult, OmiseChargeResponse } from '@kin-delivery/omise-client';
 import { WalletService } from '../wallet/wallet.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class PaymentsService {
-  private readonly prisma = new PrismaClient();
   private readonly omiseClient = new OmiseClient();
   private readonly logger = new Logger(PaymentsService.name);
 
-  constructor(private readonly walletService: WalletService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly walletService: WalletService,
+  ) {}
 
   async processChargeComplete(chargeId: string, omiseEventId: string): Promise<void> {
     const existing = await this.prisma.transaction.findFirst({

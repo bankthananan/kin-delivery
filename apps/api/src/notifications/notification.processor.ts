@@ -14,15 +14,37 @@ interface PushJobData {
 @Processor('notifications')
 export class NotificationProcessor extends WorkerHost {
   private readonly logger = new Logger(NotificationProcessor.name);
-  private messaging: admin.messaging.Messaging;
+  private messaging: admin.messaging.Messaging | null = null;
 
   constructor(private readonly prisma: PrismaService) {
     super();
-    this.messaging = admin.messaging();
+    try {
+      if (!admin.apps.length) {
+        if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+          admin.initializeApp({
+            credential: admin.credential.cert(
+              JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT),
+            ),
+          });
+        } else {
+          this.logger.warn('FIREBASE_SERVICE_ACCOUNT not set — push notifications disabled');
+        }
+      }
+      if (admin.apps.length) {
+        this.messaging = admin.messaging();
+      }
+    } catch (error) {
+      this.logger.warn('Firebase initialization failed — push notifications disabled', error);
+    }
   }
 
   async process(job: Job<PushJobData>): Promise<void> {
     const { userId, title, body, data } = job.data;
+
+    if (!this.messaging) {
+      this.logger.debug(`Push notification skipped (Firebase not configured): ${title}`);
+      return;
+    }
 
     try {
       const user = await this.prisma.user.findUnique({

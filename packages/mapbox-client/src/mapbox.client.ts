@@ -23,7 +23,7 @@ export class MapboxClient {
   constructor(accessToken?: string) {
     this.accessToken = accessToken ?? process.env.MAPBOX_ACCESS_TOKEN ?? '';
     if (!this.accessToken) {
-      throw new Error('MAPBOX_ACCESS_TOKEN is required');
+      console.warn('MAPBOX_ACCESS_TOKEN not set — Mapbox features will return errors at runtime');
     }
 
     this.http = axios.create({

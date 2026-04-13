@@ -4,7 +4,7 @@ import { Job } from 'bullmq';
 import { PrismaService } from '../database/prisma.service';
 import { GeoService } from '../geo/geo.service';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
-import { ORDER_DISPATCH_QUEUE } from './dispatch.module';
+import { ORDER_DISPATCH_QUEUE } from './dispatch.constants';
 import { OrderTier, OrderStatus } from '@kin-delivery/database';
 
 const ACTIVE_STATUSES: OrderStatus[] = [

@@ -1,51 +1,51 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { TransactionType } from '@kin-delivery/database';
 
-jest.mock('@kin-delivery/database', () => {
-  const mockTx = {
-    wallet: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      findFirst: jest.fn(),
-    },
-    transaction: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      count: jest.fn(),
-    },
-  };
+const mockTx = {
+  wallet: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    findFirst: jest.fn(),
+  },
+  transaction: {
+    create: jest.fn(),
+    findMany: jest.fn(),
+    count: jest.fn(),
+  },
+};
 
-  const mockInstance = {
-    wallet: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      findFirst: jest.fn(),
-    },
-    transaction: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      count: jest.fn(),
-    },
-    $transaction: jest.fn((cb) => cb(mockTx)),
-    _mockTx: mockTx,
-  };
+const mockPrisma = {
+  wallet: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    findFirst: jest.fn(),
+  },
+  transaction: {
+    create: jest.fn(),
+    findMany: jest.fn(),
+    count: jest.fn(),
+  },
+  $transaction: jest.fn((cb: any) => cb(mockTx)),
+  _mockTx: mockTx,
+};
 
-  return {
-    PrismaClient: jest.fn(() => mockInstance),
-    TransactionType: {
-      TOPUP: 'TOPUP',
-      PAYMENT: 'PAYMENT',
-      PAYOUT: 'PAYOUT',
-      REFUND: 'REFUND',
-      EARNING: 'EARNING',
-    },
-  };
-});
+jest.mock('../../database/prisma.service', () => ({
+  PrismaService: jest.fn(() => mockPrisma),
+}));
+
+jest.mock('@kin-delivery/database', () => ({
+  TransactionType: {
+    TOPUP: 'TOPUP',
+    PAYMENT: 'PAYMENT',
+    PAYOUT: 'PAYOUT',
+    REFUND: 'REFUND',
+    EARNING: 'EARNING',
+  },
+}));
 
 import { WalletService } from '../wallet.service';
-import { PrismaClient } from '@kin-delivery/database';
 
 function makeDecimal(value: number) {
   return {
@@ -61,9 +61,10 @@ describe('WalletService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new WalletService();
-    prisma = (service as any).prisma;
-    tx = prisma._mockTx;
+    mockPrisma.$transaction.mockImplementation((cb: any) => cb(mockTx));
+    service = new WalletService(mockPrisma as any);
+    prisma = mockPrisma;
+    tx = mockTx;
   });
 
   describe('getOrCreateWallet', () => {

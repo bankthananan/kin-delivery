@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   postgres:
-    image: postgis/postgis:15-3.3
+    image: imresamu/postgis:15-3.4
     environment:
       POSTGRES_USER: kin
       POSTGRES_PASSWORD: kin_dev_password

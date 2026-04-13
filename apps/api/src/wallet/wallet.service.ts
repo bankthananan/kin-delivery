@@ -1,10 +1,11 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaClient, TransactionType, Wallet, Transaction } from '@kin-delivery/database';
+import { TransactionType, Wallet, Transaction } from '@kin-delivery/database';
+import { PrismaService } from '../database/prisma.service';
 type Decimal = { lessThan(n: number): boolean; toString(): string };
 
 @Injectable()
 export class WalletService {
-  private readonly prisma = new PrismaClient();
+  constructor(private readonly prisma: PrismaService) {}
 
   async getOrCreateWallet(
     userId: string,
